@@ -5,7 +5,6 @@ import "encoding/json"
 type EnvelopeError struct {
 	Title    string `json:"title,omitempty"`
 	Detail   string `json:"detail,omitempty"`
-	Type     string `json:"type,omitempty"`
 	Envelope `json:"-"`
 }
 

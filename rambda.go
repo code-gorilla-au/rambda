@@ -16,7 +16,7 @@ const (
 	defaultNotFound      = "resource not found"
 	defaultConflict      = "there is a conflict with the resource"
 	defaultBadRequest    = "bad request"
-	defaultGenericServer = "generic server error"
+	defaultGenericServer = "generic server error occurred for this resource"
 )
 
 // RespondOK - respond ok
@@ -30,7 +30,7 @@ func RespondOK(message string, headers map[string]string) events.APIGatewayProxy
 
 // RespondCreated - respond created
 func RespondCreated(message string, headers map[string]string) events.APIGatewayProxyResponse {
-	msg := defaultOk
+	msg := defaultCreated
 	if message != "" {
 		msg = message
 	}
