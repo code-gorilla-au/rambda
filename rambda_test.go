@@ -146,7 +146,7 @@ func TestRespondBadRequest(t *testing.T) {
 
 func TestRespondBadRequest_custom_message(t *testing.T) {
 	resp := RespondBadRequest("custom message", nil)
-	assert.Equal(t, "{\"detail\":\"custom message\",\"title\":\"Bad Request\"}", resp.Body)
+	assert.Equal(t, expectedDefaultErrorResponse(http.StatusBadRequest, "custom message"), resp.Body)
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
 
