@@ -20,28 +20,28 @@ const (
 )
 
 // RespondOK - respond ok
-func RespondOK(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondOK(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultOk
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondJSONSimple(http.StatusOK, msg, headers)
 }
 
 // RespondCreated - respond created
-func RespondCreated(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondCreated(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultOk
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondJSONSimple(http.StatusCreated, msg, headers)
 }
 
 // RespondBadRequest - respond bad request
-func RespondBadRequest(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondBadRequest(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultBadRequest
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusBadRequest,
@@ -54,10 +54,10 @@ func RespondBadRequest(message *string, headers *map[string]string) events.APIGa
 }
 
 // RespondGenericServer - respond generic error
-func RespondGenericServer(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondGenericServer(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultGenericServer
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusInternalServerError,
@@ -70,10 +70,10 @@ func RespondGenericServer(message *string, headers *map[string]string) events.AP
 }
 
 // RespondConflict - respond conflict
-func RespondConflict(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondConflict(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultConflict
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusConflict,
@@ -86,10 +86,10 @@ func RespondConflict(message *string, headers *map[string]string) events.APIGate
 }
 
 // RespondNotFound - respond not found
-func RespondNotFound(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondNotFound(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultNotFound
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusNotFound,
@@ -100,10 +100,10 @@ func RespondNotFound(message *string, headers *map[string]string) events.APIGate
 		headers)
 }
 
-func RespondUnAuthorised(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondUnAuthorised(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultUnauthorised
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusUnauthorized,
@@ -115,10 +115,10 @@ func RespondUnAuthorised(message *string, headers *map[string]string) events.API
 	)
 }
 
-func RespondForbidden(message *string, headers *map[string]string) events.APIGatewayProxyResponse {
+func RespondForbidden(message string, headers map[string]string) events.APIGatewayProxyResponse {
 	msg := defaultForbidden
-	if message != nil {
-		msg = *message
+	if message != "" {
+		msg = message
 	}
 	return respondError(
 		http.StatusForbidden,
@@ -131,42 +131,44 @@ func RespondForbidden(message *string, headers *map[string]string) events.APIGat
 }
 
 // RespondJSONWith - api gateway proxy response
-func RespondJSONWith(status int, payload interface{}, headers *map[string]string) (events.APIGatewayProxyResponse, error) {
+func RespondJSONWith(status int, payload interface{}, headers map[string]string) (events.APIGatewayProxyResponse, error) {
 	b, err := json.Marshal(&payload)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         *headers,
+		Headers:         headers,
 		Body:            string(b),
 		IsBase64Encoded: false,
 	}, nil
 }
 
 // respondJSONSimple - respond with message and status
-func respondJSONSimple(status int, message string, headers *map[string]string) events.APIGatewayProxyResponse {
+func respondJSONSimple(status int, message string, headers map[string]string) events.APIGatewayProxyResponse {
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         *headers,
+		Headers:         headers,
 		Body:            fmt.Sprintf("{\"message\": \"%s\"}", message),
 		IsBase64Encoded: false,
 	}
 }
 
-func respondError(status int, envelope EnvelopeError, headers *map[string]string) events.APIGatewayProxyResponse {
+// respondError - response standardised error response message
+func respondError(status int, envelope EnvelopeError, headers map[string]string) events.APIGatewayProxyResponse {
 	d, err := json.Marshal(envelope)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode:      status,
-			Headers:         *headers,
+			Headers:         headers,
 			Body:            fmt.Sprintf("{ \"title\": \"%s\" \"detail\": \"%s\"}", http.StatusText(status), envelope.Detail),
 			IsBase64Encoded: false,
 		}
 	}
+
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         *headers,
+		Headers:         headers,
 		Body:            string(d),
 		IsBase64Encoded: false,
 	}
