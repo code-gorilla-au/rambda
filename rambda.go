@@ -11,8 +11,8 @@ import (
 const (
 	defaultOk            = "ok"
 	defaultCreated       = "resource created"
-	defaultForbidden     = "forbiden to access this resource"
-	defaultUnauthorised  = "unauthorised to access this resource"
+	defaultForbidden     = "forbidden to access this resource"
+	defaultUnauthorized  = "unauthorized to access this resource"
 	defaultNotFound      = "resource not found"
 	defaultConflict      = "there is a conflict with the resource"
 	defaultBadRequest    = "bad request"
@@ -101,7 +101,7 @@ func RespondNotFound(message string, headers map[string]string) events.APIGatewa
 }
 
 func RespondUnAuthorised(message string, headers map[string]string) events.APIGatewayProxyResponse {
-	msg := defaultUnauthorised
+	msg := defaultUnauthorized
 	if message != "" {
 		msg = message
 	}
