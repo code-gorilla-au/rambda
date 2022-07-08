@@ -34,7 +34,8 @@ func RespondCreated(message string, headers map[string]string) events.APIGateway
 	if message != "" {
 		msg = message
 	}
-	return respondJSONSimple(http.StatusCreated, msg, headers)
+	merged := mergeHeaders(defaultHeaders, headers)
+	return respondJSONSimple(http.StatusCreated, msg, merged)
 }
 
 // RespondBadRequest - respond bad request
@@ -43,13 +44,14 @@ func RespondBadRequest(message string, headers map[string]string) events.APIGate
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusBadRequest,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusBadRequest),
 			Detail: msg,
 		},
-		headers,
+		merged,
 	)
 }
 
@@ -59,13 +61,14 @@ func RespondGenericServer(message string, headers map[string]string) events.APIG
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusInternalServerError,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusInternalServerError),
 			Detail: msg,
 		},
-		headers,
+		merged,
 	)
 }
 
@@ -75,13 +78,14 @@ func RespondConflict(message string, headers map[string]string) events.APIGatewa
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusConflict,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusConflict),
 			Detail: msg,
 		},
-		headers,
+		merged,
 	)
 }
 
@@ -91,13 +95,16 @@ func RespondNotFound(message string, headers map[string]string) events.APIGatewa
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusNotFound,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusNotFound),
 			Detail: msg,
 		},
-		headers)
+		merged,
+	)
+
 }
 
 func RespondUnAuthorised(message string, headers map[string]string) events.APIGatewayProxyResponse {
@@ -105,13 +112,14 @@ func RespondUnAuthorised(message string, headers map[string]string) events.APIGa
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusUnauthorized,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusUnauthorized),
 			Detail: msg,
 		},
-		headers,
+		merged,
 	)
 }
 
@@ -120,13 +128,14 @@ func RespondForbidden(message string, headers map[string]string) events.APIGatew
 	if message != "" {
 		msg = message
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return respondError(
 		http.StatusForbidden,
 		EnvelopeError{
 			Title:  http.StatusText(http.StatusForbidden),
 			Detail: msg,
 		},
-		headers,
+		merged,
 	)
 }
 
@@ -136,9 +145,10 @@ func RespondJSONWith(status int, payload interface{}, headers map[string]string)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
+	merged := mergeHeaders(defaultHeaders, headers)
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         headers,
+		Headers:         merged,
 		Body:            string(b),
 		IsBase64Encoded: false,
 	}, nil
@@ -146,9 +156,10 @@ func RespondJSONWith(status int, payload interface{}, headers map[string]string)
 
 // respondJSONSimple - respond with message and status
 func respondJSONSimple(status int, message string, headers map[string]string) events.APIGatewayProxyResponse {
+	merged := mergeHeaders(defaultHeaders, headers)
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         headers,
+		Headers:         merged,
 		Body:            fmt.Sprintf("{\"message\": \"%s\"}", message),
 		IsBase64Encoded: false,
 	}
@@ -156,11 +167,12 @@ func respondJSONSimple(status int, message string, headers map[string]string) ev
 
 // respondError - response standardised error response message
 func respondError(status int, envelope EnvelopeError, headers map[string]string) events.APIGatewayProxyResponse {
+	merged := mergeHeaders(defaultHeaders, headers)
 	d, err := json.Marshal(envelope)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode:      status,
-			Headers:         headers,
+			Headers:         merged,
 			Body:            fmt.Sprintf("{ \"title\": \"%s\" \"detail\": \"%s\"}", http.StatusText(status), envelope.Detail),
 			IsBase64Encoded: false,
 		}
@@ -168,7 +180,7 @@ func respondError(status int, envelope EnvelopeError, headers map[string]string)
 
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
-		Headers:         headers,
+		Headers:         merged,
 		Body:            string(d),
 		IsBase64Encoded: false,
 	}
