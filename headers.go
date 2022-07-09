@@ -2,6 +2,7 @@ package rambda
 
 var defaultHeaders map[string]string = map[string]string{}
 
+// SetDefaultHeaders - set default headers that are applied to all lambda responses
 func SetDefaultHeaders(headers map[string]string) {
 	defaultHeaders = headers
 }
