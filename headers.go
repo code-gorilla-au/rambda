@@ -1,10 +1,10 @@
 package rambda
 
-var defaultHeaders map[string]string = map[string]string{}
+var defaultResponseHeaders map[string]string = map[string]string{}
 
 // SetDefaultHeaders - set default headers that are applied to all lambda responses
 func SetDefaultHeaders(headers map[string]string) {
-	defaultHeaders = headers
+	defaultResponseHeaders = headers
 }
 
 // mergeHeaders - merge headers, this action will overwrite a previously define header.
