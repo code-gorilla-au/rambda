@@ -34,7 +34,7 @@ func RespondCreated(message string, headers map[string]string) events.APIGateway
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondJSONSimple(http.StatusCreated, msg, merged)
 }
 
@@ -44,7 +44,7 @@ func RespondBadRequest(message string, headers map[string]string) events.APIGate
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusBadRequest,
 		EnvelopeError{
@@ -61,7 +61,7 @@ func RespondGenericServer(message string, headers map[string]string) events.APIG
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusInternalServerError,
 		EnvelopeError{
@@ -78,7 +78,7 @@ func RespondConflict(message string, headers map[string]string) events.APIGatewa
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusConflict,
 		EnvelopeError{
@@ -95,7 +95,7 @@ func RespondNotFound(message string, headers map[string]string) events.APIGatewa
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusNotFound,
 		EnvelopeError{
@@ -112,7 +112,7 @@ func RespondUnAuthorised(message string, headers map[string]string) events.APIGa
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusUnauthorized,
 		EnvelopeError{
@@ -128,7 +128,7 @@ func RespondForbidden(message string, headers map[string]string) events.APIGatew
 	if message != "" {
 		msg = message
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return respondError(
 		http.StatusForbidden,
 		EnvelopeError{
@@ -145,7 +145,7 @@ func RespondJSONWith(status int, payload interface{}, headers map[string]string)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
 		Headers:         merged,
@@ -156,7 +156,7 @@ func RespondJSONWith(status int, payload interface{}, headers map[string]string)
 
 // respondJSONSimple - respond with message and status
 func respondJSONSimple(status int, message string, headers map[string]string) events.APIGatewayProxyResponse {
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	return events.APIGatewayProxyResponse{
 		StatusCode:      status,
 		Headers:         merged,
@@ -167,7 +167,7 @@ func respondJSONSimple(status int, message string, headers map[string]string) ev
 
 // respondError - response standardised error response message
 func respondError(status int, envelope EnvelopeError, headers map[string]string) events.APIGatewayProxyResponse {
-	merged := mergeHeaders(defaultHeaders, headers)
+	merged := mergeHeaders(defaultResponseHeaders, headers)
 	d, err := json.Marshal(envelope)
 	if err != nil {
 		return events.APIGatewayProxyResponse{
